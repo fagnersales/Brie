@@ -67,6 +67,6 @@ module.exports.help = {
     name: "findemoji",
     description: `Find an emoji on my system!`,
     usage: `b.findemoji [name] | b.findemoji use [ID]`,
-    example: `b.findemoji [hahahaha] | b.findemoji use 481465000825978880`,
+    example: `b.findemoji [prefix] | b.findemoji use 594342426949320739`,
     working: true
 }

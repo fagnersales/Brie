@@ -1,5 +1,6 @@
 const Neable = require('../neable_module/NeableCommands.js')
 module.exports.run = async (Brie, message, args) => {
+    if (message.author.id !== "474407357649256448") return; 
     // Command here.
     async function clearChannel(channel, n = 0, old = false) {
         let collected = await channel.fetchMessages();

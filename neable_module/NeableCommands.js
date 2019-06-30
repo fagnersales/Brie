@@ -95,6 +95,86 @@ module.exports.isEmail = (content) => {
     isEmail = isEmail.test(content)
     return isEmail;
 }
+/**
+ * @example
+ * MODULE.helpByGif(message, {
+    title: 'Hello World',
+    footer: {
+        text: `Requested by: ${message.author.tag}`,
+        icon: message.author.displayAvatarURL
+    },
+    gif: 'LINK GIF HERE'
+})
+ */
+module.exports.helpByGif = (message, options = {}) => {
+    helpGif = new discord.RichEmbed()
+        .setTitle(options.title)
+        .setImage(options.gif)
+        .setFooter(options.footer.text, options.footer.icon)
+        .setColor('RANDOM')
+
+    if (!options.message) {
+        message.channel.send(helpGif)
+    } else {
+        return helpGif;
+    }
+}
+/**Create a embed, follow this example:
+ * @example
+ * MODULE.createEmbed(message, {
+    title: 'Hello',
+    description: 'description',
+    field: [['Text one', 'Sub-text one'], ['hello', 'wolrd']],
+    footer: {
+        text: `Resqueted by: ${message.author.tag}`,
+        icon: message.author.displayAvatarURL
+    },
+    image: 'link here'
+})
+ */
+module.exports.createEmbed = (message, options = {}) => {
+
+    if (message instanceof require('discord.js').Message) {
+        message = message;
+        options = options;
+    } else {
+        options = message;
+    }
+
+    Embed = new discord.RichEmbed()
+        .setColor('RANDOM')
+
+    options.title ? Embed.setTitle(options.title) : false
+
+    options.description ? Embed.setDescription(options.description) : false
+
+    options.timestamp ? Embed.setTimestamp() : false
+
+    options.footer ? options.footer.length == 2 ? Embed.setFooter(options.footer[0], options.footer[1]) : Embed.setFooter(options.footer[0]) : false
+
+    if (options.image) {
+        if (this.isLink(options.image)) {
+            Embed.setImage(options.image)
+        } else {
+            console.log(`Invalid link at image:`)
+        }
+    }
+
+    if (options.field) {
+        for (let field of options.field) {
+            Embed.addField(field[0], field[1])
+        }
+    }
+
+    if (message instanceof require('discord.js').Message) {
+        console.log('if')
+        message.channel.send(Embed)
+    } else {
+        console.log('else')
+        return Embed
+    }
+
+}
 
 module.exports.test = () => {
 
