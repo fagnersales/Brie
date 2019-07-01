@@ -48,7 +48,7 @@ module.exports.countdown = async (number) => {
  * @param {string} [options.emojis=[]] Emojis to react the message.
  * @returns {Message|Emoji} Message/Emoji
  * @example
- * MODULE.send("Hello World", {
+ * MODULE.sendMessage("Hello World", {
  * message: message.channel,
  * emojis: ['🍎', '🍪']
  * });
@@ -132,7 +132,7 @@ module.exports.helpByGif = (message, options = {}) => {
     image: 'link here'
 })
  */
-module.exports.createEmbed = (message, options = {}) => {
+module.exports.createEmbed = async (message, options = {}) => {
 
     if (message instanceof require('discord.js').Message) {
         message = message;
@@ -152,6 +152,8 @@ module.exports.createEmbed = (message, options = {}) => {
 
     options.footer ? options.footer.length == 2 ? Embed.setFooter(options.footer[0], options.footer[1]) : Embed.setFooter(options.footer[0]) : false
 
+    options.thumbnail ? Embed.setThumbnail(options.thumbnail) : false
+
     if (options.image) {
         if (this.isLink(options.image)) {
             Embed.setImage(options.image)
@@ -167,10 +169,9 @@ module.exports.createEmbed = (message, options = {}) => {
     }
 
     if (message instanceof require('discord.js').Message) {
-        console.log('if')
-        message.channel.send(Embed)
+        const messageWithEmbed = await message.channel.send(Embed)
+        return { EmbedContent: Embed, messageWithEmbed: messageWithEmbed }
     } else {
-        console.log('else')
         return Embed
     }
 

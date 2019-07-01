@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const Neable = require('../neable_module/NeableCommands.js')
+const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
   // Command here.
   let Links = [
@@ -24,11 +24,11 @@ module.exports.run = async (Brie, message, args) => {
     footer: [`React with 🤗 to wish good night too!`, `${mentioned.displayAvatarURL}`]
   }).then(async msg => {
 
-    await msg.react('🤗')
+    msg.messageWithEmbed.react('🤗')
 
     let filter = (reaction, user) => reaction.emoji.name === "🤗" && user.id === mentioned.id;
 
-    const collector = msg.createReactionCollector(filter, { max: 1, time: 60000 });
+    const collector = msg.messageWithEmbed.createReactionCollector(filter, { max: 1, time: 60000 });
 
     collector.on("collect", () => {
       Neable.createEmbed(message, {

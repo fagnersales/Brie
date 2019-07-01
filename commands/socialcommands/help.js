@@ -1,17 +1,24 @@
 const Discord = require('discord.js');
 const fs = require('fs');
+const Neable = require('c:/Brie/neable_module/NeableCommands');
+
 module.exports.run = (Brie, message, args) => {
-    var text = '';
+
+
+    var leagueCommands = '';
+    var moderationCommands = '';
+    var sociaCommands = ''; 
 
     function ListOfCommands() {
         files = fs.readdirSync('./commands/')
         files.forEach(file => {
-
             request = require(`./${file}`);
-
+            var rh = request.help;
+            
             if (request.help.working == true) {
-
-                text += (`\n<:prefix:594342426949320739> ${request.help.name} | ${request.help.description}\nUsage: \`${request.help.usage}\``)
+                    if (request.help.type == 'league of legends') {
+                        leagueCommands += (`${rh.type}`);
+                    }
 
             }
         });
@@ -20,7 +27,7 @@ module.exports.run = (Brie, message, args) => {
             .setTitle('Commands')
             .setColor('RANDOM')
             .setTimestamp()
-            .setDescription(text))
+            .setDescription(leagueCommands))
     }
 
     if (!args[0]) {

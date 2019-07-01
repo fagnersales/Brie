@@ -1,4 +1,4 @@
-const Neable = require('../neable_module/NeableCommands.js')
+const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
 
 

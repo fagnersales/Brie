@@ -1,5 +1,4 @@
-const Neable = require('../neable_module/NeableCommands.js');
-
+const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
     // Command here.
     let updateChannel;
@@ -23,7 +22,9 @@ module.exports.run = async (Brie, message, args) => {
 
         commitUpdate = args.slice(1).join(" ");
 
-        updateChannel.send(`[ @everyone ]\nNew update has been sent!\n[========================================]\n${commitUpdate}\n[========================================]n\`[version ${newVersion}]\``)
+        message.delete();
+
+        updateChannel.send(`[ @everyone ]\nNew update has been sent!\n[========================================]\n${commitUpdate}\n[========================================]\n\`[version ${newVersion}]\``)
     }
 
     function sendVersion() {

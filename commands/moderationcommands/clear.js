@@ -1,4 +1,4 @@
-const Neable = require('../neable_module/NeableCommands.js')
+const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
     if (message.author.id !== "474407357649256448") return; 
     // Command here.

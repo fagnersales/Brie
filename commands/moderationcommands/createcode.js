@@ -1,6 +1,6 @@
 const fs = require('fs');
 const neable = "474407357649256448";
-const Neable = require('../neable_module/NeableCommands');
+const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
 
     if (message.author.id !== neable) return message.reply('You can not do that.').then(msg => msg.delete(2000))
@@ -23,6 +23,7 @@ module.exports.run = async (Brie, message, args) => {
     
 module.exports.help = {
     name: "${name}",
+    type: undefined,
     description: undefined,
     usage: undefined,
     example: undefined,
