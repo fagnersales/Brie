@@ -38,8 +38,9 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
     name: "finduser",
-    description: `Find an user on discord by ID`,
-    usage: `b.finduser [ID]`,
-    example: `b.finduser 578067057006870569`,
+    type: "social",
+    description: "Find an user on discord by ID",
+    usage: "b.finduser [ID/Name]",
+    example: "b.finduser 578067057006870569",
     working: true
 }

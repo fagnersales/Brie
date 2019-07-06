@@ -29,9 +29,10 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
     name: "avatar",
+    type: "social",
     description: "See the avatar of an user!",
-    specialNote: "You can see users out of the server, but just works with his ID.",
-    usage: `b.avatar [ID/MENTION] `,
-    example: `b.avatar @Brie`,
+    specialNote: "You can see users out of the server, but just works with the ID.",
+    usage: "b.avatar [ID/MENTION]",
+    example: "b.avatar @Brie",
     working: true
 }

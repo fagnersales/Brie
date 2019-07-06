@@ -37,6 +37,7 @@ module.exports.help = {
 
 module.exports.help = {
     name: "createcode",
+    type: "moderation",
     description: "Create a new js command",
     usage: "b.CreateCode [name]",
     example: "b.CreateCode ping",

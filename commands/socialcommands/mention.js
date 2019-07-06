@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const Neable = require('c:/Brie/neable_module/NeableCommands');
-
 module.exports.run = (Brie, message, args) => {
 
 
@@ -95,8 +94,9 @@ Mentioned By: ${message.author.username}`)
 
 module.exports.help = {
     name: 'mention',
+    type: "social",
     description: 'Mention a message',
-    usage: `b.mention [ID/LINK]`,
-    example: `b.mention 593177485139509279`,
+    usage: "b.mention [ID/LINK]",
+    example: "b.mention 593177485139509279",
     working: true
 }

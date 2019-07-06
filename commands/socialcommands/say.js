@@ -29,8 +29,9 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
     name: "say",
+    type: "social",
     description: "Makes me say something!",
-    usage: `b.say [content]`,
-    example: `b.say Hello World!`,
+    usage: "b.say [text]",
+    example: "b.say Hello World!",
     working: true
 }

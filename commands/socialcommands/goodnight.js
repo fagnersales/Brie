@@ -3,9 +3,9 @@ const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
   // Command here.
   let Links = [
-    'https://cdn.discordapp.com/attachments/594311437212450830/594994548648837155/unknown.png',
-    'https://cdn.discordapp.com/attachments/594311437212450830/594994559906217986/unknown.png',
-    'https://cdn.discordapp.com/attachments/594311437212450830/594994575832252447/unknown.png'
+    'https://cdn.discordapp.com/attachments/589795009147174925/595372035224502304/57177000_153094222386537_1268985050512864916_n.png',
+    'https://cdn.discordapp.com/attachments/589795009147174925/595372035224502304/57177000_153094222386537_1268985050512864916_n.png',
+    'https://cdn.discordapp.com/attachments/589795009147174925/595372035224502304/57177000_153094222386537_1268985050512864916_n.png'
   ] // set new links here..
 
   var mentioned = message.mentions.users.first()
@@ -43,8 +43,9 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
   name: "goodnight",
-  description: `Wish goodnight to someone, but we don't have images to use yet`,
-  usage: `b.goodnight [user*] [message]`,
-  example: `b.goodnight @Brie`,
+  type: "social",
+  description: "Wish goodnight to someone, but we don't have images to use yet",
+  usage: "b.goodnight [user] [message]",
+  example: "b.goodnight @Brie",
   working: true
 }

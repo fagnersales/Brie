@@ -24,7 +24,7 @@ module.exports.run = async (Brie, message, args) => {
 
         message.delete();
 
-        updateChannel.send(`[ @everyone ]\nNew update has been sent!\n[========================================]\n${commitUpdate}\n[========================================]\n\`[version ${newVersion}]\``)
+        updateChannel.send(`[ @everyone ]\nNew update has been sent!\n ${commitUpdate}\n\`[version ${newVersion}]\``)
     }
 
     function sendVersion() {

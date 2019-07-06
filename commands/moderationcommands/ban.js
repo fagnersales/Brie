@@ -26,8 +26,9 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
     name: "ban",
-    description: `Ban someone from the server!`,
-    usage: `b.ban [MENTION/ID]* [reason]`,
-    example: `b.ban @brie I am just testing again!`,
+    type: "moderation",
+    description: "Ban someone from the server!",
+    usage: "b.ban [MENTION/ID] [reason]",
+    example: "b.ban @brie I am just testing again!",
     working: true
 }

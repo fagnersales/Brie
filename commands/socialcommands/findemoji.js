@@ -65,8 +65,9 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
     name: "findemoji",
-    description: `Find an emoji on my system!`,
-    usage: `b.findemoji [name] | b.findemoji use [ID]`,
-    example: `b.findemoji [prefix] | b.findemoji use 594342426949320739`,
+    type: "social",
+    description: "Find an emoji on my system!",
+    usage: "b.findemoji [name] & b.findemoji use [ID]",
+    example: "b.findemoji [prefix] & b.findemoji use 594342426949320739",
     working: true
 }

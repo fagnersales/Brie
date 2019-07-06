@@ -43,8 +43,9 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
     name: "embed",
-    description: `Creates a beautiful embed using simple messages!`,
-    usage: `b.embed`,
-    example: `b.embed`,
+    type: "moderation",
+    description: "Creates a beautiful embed using simple messages!",
+    usage: "b.embed",
+    example: "b.embed",
     working: true
 }

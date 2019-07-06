@@ -1,6 +1,6 @@
 const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
-    if (message.author.id !== "474407357649256448") return; 
+    if (message.author.id !== message.guild.ownerID) return; 
     // Command here.
     async function clearChannel(channel, n = 0, old = false) {
         let collected = await channel.fetchMessages();
@@ -24,8 +24,9 @@ module.exports.run = async (Brie, message, args) => {
 
 module.exports.help = {
     name: "clear",
-    description: `Delete all messages of a channel`,
-    usage: `b.clear`,
-    example: `b.clear`,
+    type: "moderation",
+    description: "Delete all messages of a channel",
+    usage: "b.clear",
+    example: "b.clear",
     working: true
 }

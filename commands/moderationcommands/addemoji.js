@@ -1,5 +1,4 @@
 const Neable = require('c:/Brie/neable_module/NeableCommands');
-
 const Discord = require('discord.js')
 module.exports.run = async (Brie, message, args) => {
     // Command here.
@@ -18,9 +17,8 @@ module.exports.run = async (Brie, message, args) => {
         console.log('Sem attach') // Se nao teve anexo, ele entra nesse bloco pra tentar achar URL
         if (!args[0]) return message.channel.send(`\`${message.author.username}\`se usa assim \`emojiadd link nome\``) // Se nao passar args
         link = args[0] // Se nao tem anexo, ele assume args[0] como link
-        if (!link.includes(fileTypes[0])) { //png   // Se args[0] (url) nao tem a substring png entra no bloco e testa jpg
-            if (!link.includes(fileTypes[1])) //jpg
-                return message.channel.send(invalidFile) // return pra terminar o codigo aqui
+        if (!link.includes(fileTypes[0]) || !link.includes(fileTypes[1])) { //png   // Se args[0] (url) nao tem a substring png entra no bloco e testa jpg
+            return message.channel.send(invalidFile) // return pra terminar o codigo aqui
         }
         if (link.includes('.gif')) return message.channel.send('Eu ainda nao crio emojis animados (gif)') // ainda nao testei essa parte,
         req = link     // vamos colocar nossa url nessa var pra facilitar a vida **********************  // em futuro patch pode suportar gifs ou nao 
@@ -47,73 +45,67 @@ module.exports.run = async (Brie, message, args) => {
 
     //guild.createEmoji('link', 'nome')
 
-    superagent
-        //.get('https://data.whicdn.com/images/225371257/large.jpg') São so testes, esses dois links
-        //.get('https://wallpapercave.com/wp/CToGD7f.jpg')
-        .get(req) // request na nossa URL, nao importando se é URL do user ou link do Discord
-        .then(r => {
-            console.log(typeof r) // Usamos then numa Promise pra fazer alguma coisa caso o codigo dê certo e logamos o typo da requests, geralmente é objeto (eu acho)
-            console.log('O tipo da request é ' + typeof r.body) // Logamos novamente o tipo/type do objeto requisitado, eu nao lembro mas acho que retorna hexadecimal
-            //console.log(r.body) // Debug apenas
-            buf = Buffer.byteLength(r.body, 'utf8') // Aqui nos usamos o objeto Buffer (memória) pra verificar a quantidade de bytes do nosso arquivo e colocamos na variavel buf
-            console.log('A imagem tem ' + buf + ' bytes') // Tamanho do nosso arquivo em bytes
-            //message.channel.startTyping()
+    const r = await superagent.get(req) // request na nossa URL, nao importando se é URL do user ou link do Discord
+    console.log(typeof r) // Usamos then numa Promise pra fazer alguma coisa caso o codigo dê certo e logamos o typo da requests, geralmente é objeto (eu acho)
+    console.log('O tipo da request é ' + typeof r.body) // Logamos novamente o tipo/type do objeto requisitado, eu nao lembro mas acho que retorna hexadecimal
+    //console.log(r.body) // Debug apenas
+    buf = Buffer.byteLength(r.body, 'utf8') // Aqui nos usamos o objeto Buffer (memória) pra verificar a quantidade de bytes do nosso arquivo e colocamos na variavel buf
+    console.log('A imagem tem ' + buf + ' bytes') // Tamanho do nosso arquivo em bytes
+    //message.channel.startTyping()
 
-            const Jimp = require('jimp') // Importamos o Jimp aqui pra nao carregar sem necessidade caso o codigo nao chegue até aqui
-            Jimp.read(r.body) // Lemos o nosso objeto
-                .then(image => { // Os dados encontrado do nosso objeto r.body (nossa request na URL) são passados pro parametro 'image'
-                    kb = buf / 1024 // Convertemos o tamanho do nosso arquivo pra kb
-                    if (kb > 250) { // O tamanho maximo de imagem pra emoji no Discord é 256 kb mas achei melhor deixar uma margem razoavel
-                        console.log('Tamanho da imagem maior que 250 kb') // Entrou nesse bloco pq a image passou de 250 kb
-                        let kbSize = kb // Apenas pra ter o valor inicial do arquivo
-                        let scaleValue = 0.5 // Nossa taxa de resize da image
-                        let initialScale = scaleValue // Detalhe estético e debug
-                        while (kbSize > 250) { // Enquanto o tamanho da image for maior que 250 kb
-                            console.log(kbSize) // Mostra o valor da image a cada loop que é diminuída
-                            console.log(`Loop ${loop}`) // Mostra o loop atual e quantos loops aconteceram pra diminuir a image
-                            loop++ // Aumenta o valor do loop
-                            let img = image.scale(scaleValue) // Imagem escalada pela taxa definida em scaleValue, 0.5 = metade do tamanho, 0.25 metade da metade
-                            console.log(img) // Nem sabia pra que servia isso no começo, mas descobri que mostra a resoluçao da imagem Resoluçao da imagem em pixels exemplo: 400 x 400
-                            kbSize = kbSize / 2 // Arquivo o tamanho da nossa imagem foi
-                            scaleValue = scaleValue / 2
-                            console.log(scaleValue + ' dividido')
-                            console.log(initialScale)
+    const Jimp = require('jimp') // Importamos o Jimp aqui pra nao carregar sem necessidade caso o codigo nao chegue até aqui
+    const image = await Jimp.read(r.body) // Lemos o nosso objeto
+    kb = buf / 1024 // Convertemos o tamanho do nosso arquivo pra kb
+    if (kb > 250) { // O tamanho maximo de imagem pra emoji no Discord é 256 kb mas achei melhor deixar uma margem razoavel
+        console.log('Tamanho da imagem maior que 250 kb') // Entrou nesse bloco pq a image passou de 250 kb
+        let kbSize = kb // Apenas pra ter o valor inicial do arquivo
+        let scaleValue = 0.5 // Nossa taxa de resize da image
+        let initialScale = scaleValue // Detalhe estético e debug
+        while (kbSize > 250) { // Enquanto o tamanho da image for maior que 250 kb
+            console.log(kbSize) // Mostra o valor da image a cada loop que é diminuída
+            console.log(`Loop ${loop}`) // Mostra o loop atual e quantos loops aconteceram pra diminuir a image
+            loop++ // Aumenta o valor do loop
+            let img = image.scale(scaleValue) // Imagem escalada pela taxa definida em scaleValue, 0.5 = metade do tamanho, 0.25 metade da metade
+            console.log(img) // Nem sabia pra que servia isso no começo, mas descobri que mostra a resoluçao da imagem Resoluçao da imagem em pixels exemplo: 400 x 400
+            kbSize = kbSize / 2 // Arquivo o tamanho da nossa imagem foi
+            scaleValue = scaleValue / 2
+            console.log(scaleValue + ' dividido')
+            console.log(initialScale)
 
-                        }
-                        console.log(`A imagem foi escalada em ${(scaleValue / initialScale) * 100}%`) // Detalhe estético que diz em quantos % foi escalada a image
-                        image.write('image_resized.png') // Se image foi reduzida, é criado um arquivo com nome image_resized
-                        /******************************/
-                        if (kb > 250) { // Nem sei se isso é mesmo necessário... mas funcionou, ache melhor nao mexer
-                            message.guild.createEmoji('image_resized.png', name) // Criando nosso emoji com a image resized e o name definido antes
-                                .then(emoji => message.channel.send(`Seu emoji <:${emoji.name}:${emoji.id}>`)) // Se emoji criado com sucesso, seus dados são passados pro then
-                                .catch(e => message.channel.send(`Erro ${e.message}`)) // com o then consigo enviar o emoji e catch se der erro, ce ja sabe ne
-                            //message.channel.stopTyping()
-                            return console.log('Codigo finalizado') // Pra saber se deu tudo certo
-                            /**************************************/
-                        }
+        }
+        console.log(`A imagem foi escalada em ${(scaleValue / initialScale) * 100}%`) // Detalhe estético que diz em quantos % foi escalada a image
+        image.write('image_resized.png') // Se image foi reduzida, é criado um arquivo com nome image_resized
+        /******************************/
+        if (kb > 250) { // Nem sei se isso é mesmo necessário... mas funcionou, ache melhor nao mexer
+            message.guild.createEmoji('image_resized.png', name) // Criando nosso emoji com a image resized e o name definido antes
+                .then(emoji => message.channel.send(`Seu emoji <:${emoji.name}:${emoji.id}>`)) // Se emoji criado com sucesso, seus dados são passados pro then
+                .catch(e => message.channel.send(`Erro ${e.message}`)) // com o then consigo enviar o emoji e catch se der erro, ce ja sabe ne
+            //message.channel.stopTyping()
+            return console.log('Codigo finalizado') // Pra saber se deu tudo certo
+            /**************************************/
+        }
 
-                    }
-                    else if (kb < 250) { // Se a imagem é menor que 250 kb, nao precisa redimensionar
-                        console.log('Imagem menor que 250 kb')
-                        image.write('image.png') // Cria uma imagem com nome image
-                        /**********************/
-                        if (kb < 250) {
-                            message.guild.createEmoji('image.png', name) // Cria o emoji com a imagem e o name
-                                .then(emoji => message.channel.send(`Seu emoji <:${emoji.name}:${emoji.id}>`))
-                                .catch(e => message.channel.send(`Erro ${e.message}`))
-                            return console.log('Codigo finalizado')
-                        }
+    }
+    else if (kb < 250) { // Se a imagem é menor que 250 kb, nao precisa redimensionar
+        console.log('Imagem menor que 250 kb')
+        image.write('image.png') // Cria uma imagem com nome image
+        /**********************/
+        if (kb < 250) {
+            message.guild.createEmoji('image.png', name) // Cria o emoji com a imagem e o name
+                .then(emoji => message.channel.send(`Seu emoji <:${emoji.name}:${emoji.id}>`))
+                .catch(e => message.channel.send(`Erro ${e.message}`))
+            return console.log('Codigo finalizado')
+        }
 
-                    }
-                })
-        })
-        .catch(err => console.log(err)) // Esse aqui é o catch caso o requests de erro
+    }
+    image.catch(err => console.log(err)) // Esse aqui é o catch caso o requests de erro
 }
 
 module.exports.help = {
     name: "addemoji",
-    description: undefined,
-    usage: undefined,
-    example: undefined,
-    working: false
+    type: "moderation",
+    description: `Add a new emoji to your server!`,
+    usage: `b.addemoji [link/image]`,
+    example: `b.addemoji https://cdn.discordapp.com/attachments/575803487657525263/595333866101669908/unknown.png`,
+    working: true
 }
