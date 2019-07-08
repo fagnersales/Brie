@@ -11,20 +11,18 @@ module.exports.run = async (Brie, message, args) => {
 
     function newUpdate() {
         if (message.author.id !== "474407357649256448") return;
-
-        // message.delete();
-
+        
         let newVersion;
 
         newVersion = args[0];
 
-        updateChannel.setTopic(`Version ${newVersion}`);
+        updateChannel.setTopic(`Versão ${newVersion}`);
 
         commitUpdate = args.slice(1).join(" ");
 
         message.delete();
 
-        updateChannel.send(`[ @everyone ]\nNew update has been sent!\n ${commitUpdate}\n\`[version ${newVersion}]\``)
+        updateChannel.send(`[ @everyone ]\nUma nova atualização acabou de ser enviada!\n ${commitUpdate}\n\`[versão ${newVersion}]\``)
     }
 
     function sendVersion() {

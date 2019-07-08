@@ -1,17 +1,22 @@
 const Discord = require("discord.js");
+const { Util } = require('discord.js');
 const Brie = new Discord.Client({ fetchAllMembers: true });
 const prefix = "b.";
 const fs = require("fs");
 const Neable = require('c:/Brie/neable_module/NeableCommands');
 mentionEmoji = "🍪";
+const TimeoutEXP = new Set();
+const ytdl = require('ytdl-core');
 timeout = new Set();
 timeoutTime = 60000;
 const chalk = require('chalk');
-
 const mongoose = require('mongoose');
 mongoose.connect('mongodb+srv://brielarson:2f0a1g1n2e5r12@cluster0-geqjm.mongodb.net/brie_system?retryWrites=true&w=majority', { useNewUrlParser: true })
-const Money = require('./models/money.js');
-
+const Level = require('./models/level.js');
+const Welcome = require('./models/welcome.js');
+const YouTube = require('simple-youtube-api');
+const youtube = new YouTube('AIzaSyAy5k-WCovjhCtJ8naRM88dOIMiRqw2XVw');
+let queue = new Map();
 // const BrieBR = new Discord.Client({ fetchAllMembers: true });
 // BrieBR.login('NTk1ODg2OTkxODYyOTIzMjc0.XRxhbA.d-Ahihs9tDRzTJDRhXstlJSPyUY')
 
@@ -31,33 +36,53 @@ fs.readdir("./commands/", (err, folders) => {
 });
 
 
+// add exp by messages.
 Brie.on('message', async message => {
     if (message.author.bot) return;
     if (!message.content.startsWith(prefix)) {
-        coinsToAdd = Math.floor(Math.random() * 20) + 1;
-        Money.findOne({
-            userID: message.author.id,
-            serverID: message.guild.id
-        }, (err, money) => {
-            if (err) console.log(err);
-            if (!money) {
-                const newMoney = new Money({
-                    userID: message.author.id,
-                    serverID: message.guild.id,
-                    money: coinsToAdd
-                })
 
-                newMoney.save()
-                    .then(() => console.log(`Coins To Add: ${chalk.bold.green(coinsToAdd)} ${chalk.bold.green('NEW')} ${chalk.bold.blue(message.author.username)} foi adicionado à database!`))
-                    .catch((err) => console.log(err));
-            } else {
-                money.money = money.money + coinsToAdd;
-                money.save()
-                    .then(() => console.log(`Coins To Add: ${chalk.bold.green(coinsToAdd)} ${chalk.bold.yellow('EDITED')} ${chalk.bold.blue(message.author.username)} foi atualizado na database!`))
-                    .catch((err) => console.log(err));
-            }
+        if (TimeoutEXP.has(message.author.id)) {
+            return;
+        } else {
+            TimeoutEXP.add(message.author.id);
 
-        })
+            xpToAdd = Math.floor(Math.random() * 60) + 1;
+            Level.findOne({
+                userID: message.author.id,
+                serverID: message.guild.id
+            }, (err, xpSystem) => {
+                if (err) console.log(err);
+                if (!xpSystem) {
+                    const newXP = new Level({
+                        userID: message.author.id,
+                        serverID: message.guild.id,
+                        xp: xpToAdd,
+                        level: 1
+                    })
+
+                    newXP.save()
+                        .then(() => console.log(`xp to add: ${chalk.bold.green(xpToAdd)} | ${chalk.bold.green('NEW')} ${chalk.bold.blue(message.author.username)} foi adicionado à database!`))
+                        .catch((err) => console.log(err));
+                } else {
+                    xpSystem.xp = xpSystem.xp + xpToAdd;
+                    if (xpSystem.xp > xpSystem.level * 100) {
+                        xpSystem.level = xpSystem.level + 1;
+                        console.log(`${chalk.bold.green('LEVEL UP')} ${message.author.username} subiu para o nível ${xpSystem.level}`)
+                    }
+                    xpSystem.save()
+                        .then(() => console.log(`xp to add: ${chalk.bold.green(xpToAdd)} ${chalk.bold.yellow('EDITED')} ${chalk.bold.blue(message.author.username)} foi atualizado na database!`))
+                        .catch((err) => console.log(err));
+                }
+                setTimeout(() => {
+                    TimeoutEXP.delete(message.author.id);
+                }, 60000)
+
+            })
+
+        }
+
+    } else {
+        return;
     }
 
 });
@@ -84,8 +109,7 @@ Brie.on("message", async message => {
     try {
         command.run(Brie, message, args)
     } catch (err) {
-        console.log(err);
-        return message.channel.send(`Something goes wrong here, please fell free to report this bug at my guild *\`discord.gg/JWECGU8/\`* or send a message to my creator! \`Neable_#6565\``)
+        console.log(err.message)
     }
 });
 
@@ -168,19 +192,182 @@ Brie.on('guildMemberRemove', member => {
 })
 
 Brie.on('guildMemberAdd', member => {
-    if (member.guild.id !== "594311437212450827") return;
-    welcomeChannel = Brie.channels.get("595037720586485760");
-    Neable.createEmbed({
-        title: `Welcome ${member.user.username} to ${member.guild.name}!`,
-        description: `Please, read the #faq and #rules before start using the server!
-This guild isn't exactly just about Brie, you can make new friends here!
-
-**Total members now: ${member.guild.memberCount}**`,
-        thumbnail: `${member.user.avatarURL}`
-    }).then(result => {
-        welcomeChannel.send(result)
+    Welcome.findOne({
+        welcomeServerID: member.guild.id
+    }, (err, wc) => {
+        if (err) console.log(err)
+        if (!wc) {
+            console.log(`doesn't exist`)
+        } else {
+            welcomeChannel = member.guild.channels.find(c => c.id === wc.welcomeChannelID)
+            test = wc.welcomeMessage.replace('{Membro}', member.user.username)
+            welcomeChannel.send(test)
+        }
     })
 });
+// objeto de musicas
 
+Brie.on('message', async (message) => {
+    // args padrão
+    const args = message.content.split(" ")
+    const searchString = args.slice(1).join(" ");
+    const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+    const serverQueue = queue.get(message.guild.id);
+
+    //economizar espaço
+    mc = message.content;
+    if (mc.startsWith('b.play')) {
+        // canal de voz que o usuário está
+        voiceChannel = message.member.voiceChannel;
+        // se não estiver 
+        if (!voiceChannel) return message.reply(`Você precisa entrar em um canal de voz para tocar músicas!`);
+        // permissões do canal de voz sobre o bot
+        const permissions = voiceChannel.permissionsFor(message.client.user);
+        // se não tiver a permissão connect
+        if (!permissions.has('CONNECT')) return message.reply(`Eu não posso entrar neste canal de voz...`);
+        // se não tiver a permissão speak
+        if (!permissions.has('SPEAK')) return message.reply(`Eu não posso falar neste canal de voz...`);
+        // checar se é um link do youtube com playlist
+        if (url.match(/^https:?\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+            // buscar a playlist pela url
+            const playlist = await youtube.getPlaylist(url);
+            // buscar os videos da playlist
+            const videos = await playlist.getVideos();
+            // para cada video
+            for (const video of Object.values(videos)) {
+                // receber o id de cada video
+                const video2 = await youtube.getVideoByID(video.id);
+                // chamar a função com plyalist = true enviando os videos recebidos
+                handleVideo(video2, message, voiceChannel, true);
+            }
+            console.log('b')
+            return message.channel.send(`A playlist **${playlist.title}** foi adicionada à lista de músicas!`)
+        } else {
+            try {
+                // tentar pegar o vide pela url
+                var video = await youtube.getVideo(url);
+            } catch (error) {
+                try {
+                    // se não conseguir tentar pelas palavras
+                    var videos = await youtube.searchVideos(searchString, 5);
+                    Neable.createEmbed(message, {
+                        title: `Seleção de Música:`,
+                        description: `${videos.map((video2, i) => `${i + 1} [${video2.title}](${video2.url})`).join('\n')}
+                        
+                        Escolha uma das músicas pelo número correspondente!`
+                    });
+                    try {
+                        var response = await message.channel.awaitMessages(msg2 => msg2.content >= 0 && msg2.content <= 5 && msg2.author.id === message.author.id, {
+                            max: 1,
+                            time: 15000,
+                            errors: ['time']
+                        })
+                    } catch (err) {
+                        console.error(err);
+                        return message.channel.send(`Valor inválido, cancelando a seleção de música.`)
+                    }
+                    const videoIndex = parseInt(response.first().content);
+                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+                    // se não conseguir e retornar erro
+                } catch (error) {
+                    return message.reply(`Não encontrei nenhuma música com este nome...`);
+                }
+            }
+            return handleVideo(video, message, voiceChannel);
+        }
+        // musica encontrada com id titulo e url
+    }
+})
+
+async function handleVideo(video, message, voiceChannel, playlist = false) {
+    const serverQueue = queue.get(message.guild.id);
+    const songRequested = {
+        id: video.id,
+        title: Util.escapeMarkdown(video.title),
+        url: `https://www.youtube.com/watch?v=${video.id}`
+    }
+    // se não estiver tocando neste servidor
+    if (!serverQueue) {
+        // criar um objeto com estas coias ai
+        const queueConstruct = {
+            textChannel: message.channel,
+            voiceChannel: voiceChannel,
+            connection: null,
+            songs: [],
+            volume: 5,
+            playing: true
+        };
+        // salvar dentro de queue, o constructor dentro do id do servidor
+        queue.set(message.guild.id, queueConstruct);
+        // adicionar em songs a musica requerida
+        queueConstruct.songs.push(songRequested);
+        try {
+            // função conectar no canal que o usuário está (Voice Channel)
+            var connection = await voiceChannel.join();
+            // salvar dentro do queue constructor
+            queueConstruct.connection = connection;
+            // chamar a função com os parametros [servidor | primeira música]
+            playTheSong(message.guild, queueConstruct.songs[0]);
+            // dps que tocar a musica
+            await Neable.createEmbed(message, {
+                title: `Começando a tocar!`,
+                field: [['Título:', `${songRequested.title}`],
+                ['URL:', `${songRequested.url}`]]
+            })
+            // se não conseguir conectar
+        } catch (error) {
+            console.log(error);
+            // deletar o servidor de dentro do constructor²
+            queue.delete(message.guild.id);
+            return message.reply(`Não consegui me conectar ao canal de voz.`);
+        };
+    } else {
+        // se já estiver tocando, apenas slavar a musica que foi requerida
+        serverQueue.songs.push(songRequested);
+        // retornar a mensagem de que a musica foi requerida + informações dela.
+        if (playlist) return
+        else return Neable.createEmbed(message, {
+            title: `Nova música adicionada!`,
+            field: [['Título:', `${songRequested.title}`],
+            ['URL:', `${songRequested.url}`]]
+        })
+    }
+
+}
+// função para começar a tocar música
+function playTheSong(guild, songRequested) {
+    // buscar dentro do serverQueue o servidor com este ID
+    const serverQueue = queue.get(guild.id);
+    // se não houver mais músicas
+    if (!songRequested) {
+        // sair do canal que está dentro do serverQueue
+        serverQueue.voiceChannel.leave();
+        // deletar o servidor de dentro do constructor
+        queue.delete(guild.id);
+        // finish.
+        return;
+    }
+    // tocar a música dentro do canal salvado no constructor
+    const dispatcher = serverQueue.connection.playStream(ytdl(songRequested.url));
+    // receber evento de fim da musica
+    dispatcher.on('end', () => {
+        // remover a primeira música (no caso a que acabou de tocar)
+        serverQueue.songs.shift();
+        if (serverQueue.songs.length > 1) {
+            // chamando a função novamente com a primeira música.
+            playTheSong(guild, serverQueue.songs[0]);
+        } else {
+            // sair do canal de voz que foi conectado anteriormente
+            voiceChannel.leave();
+        }
+
+    });
+    // receber evento de erro
+    dispatcher.on('error', (error) => console.log(error));
+    // volume da música que está sendo tocada.
+    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+}
+
+module.exports.queue = queue;
 
 Brie.login("NTc4MDY3MDU3MDA2ODcwNTY5.XQ5jCQ.RY7Adt3suH0dC2jFrMF0MzTl1E0");

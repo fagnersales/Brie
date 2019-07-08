@@ -1,26 +1,30 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const Neable = require('c:/Brie/neable_module/NeableCommands');
-module.exports.run = (Brie, message, args) => {
+module.exports.run = async (Brie, message, args) => {
 
+    // ler todos os comandos 
+    async function ListOfCommands() {
+        var leagueCommands = '';
+        leagueCount = 0;
+        moreLeagueCommands = 0;
+        var moderationCommands = '';
+        moderationCount = 0;
+        moreModerationCommands = 0;
+        var socialCommands = '';
+        moreSocialCommands = 0;
+        socialCount = 0;
+        var musicCommands = '';
+        moreMusicCommands = 0;
+        musicCount = 0;
 
-    var leagueCommands = '';
-    leagueCount = 0;
-    moreLeagueCommands = 0;
-    var moderationCommands = '';
-    moderationCount = 0;
-    moreModerationCommands = 0;
-    var socialCommands = '';
-    moreSocialCommands = 0;
-    socialCount = 0;
-
-    function ListOfCommands() {
         folders = fs.readdirSync('./commands/')
         folders.forEach(fold => {
             archives = fs.readdirSync(`./commands/${fold}`)
             archives.forEach(archive => {
                 request = require(`../../commands/${fold}/${archive}`);
                 let rh = request.help;
+                // listar todos os comandos que estão funcionando e em seguida listar por tipos
                 if (request.help.working == true) {
                     if (rh.type == 'league of legends') {
                         // league of legends commands
@@ -42,51 +46,73 @@ module.exports.run = (Brie, message, args) => {
                             moreModerationCommands++;
                         }
                     }
+                    else if (rh.type == 'music') {
+                        musicCount++;
+                        if (musicCount <= 2) {
+                            musicCommands += (`\`\`b.${rh.name}\`\` | `);
+                        } else if (musicCount > 3) {
+                            moreMusicCommands++;
+                        }
+                    }
                 }
             })
         })
-        Neable.createEmbed(message, {
-            title: "A list of my commands:",
+        // criar embed
+        const embed = await Neable.createEmbed({
+            title: "Lista de Comandos:",
             field: [
-                [`<:League:595322670023835674> League Commands:`, `${leagueCommands}`],
-                [`💬 Social Commands:`, `${socialCommands} \`more ${moreSocialCommands} commands...\``],
-                [`👮 Moderation Commands:`, `${moderationCommands} \`more ${moreModerationCommands} commands...\``]
+                [`<:League:595322670023835674> League of Legends:`, `${leagueCommands}`],
+                [`💬 Social:`, `${socialCommands} \`mais ${moreSocialCommands} comandos...\``],
+                [`👮 Moderação:`, `${moderationCommands} \`mais ${moreModerationCommands} comandos...\``],
+                [`🔊 Música:`, `\`b.play\` | ${musicCommands} \`mais ${moreMusicCommands} comandos...\``]
             ],
-            footer: [`Requested by: ${message.author.tag}`, message.author.displayAvatarURL]
+            footer: [`Requerido por: ${message.author.tag}`, message.author.displayAvatarURL]
         })
-    }
+        // emojis 
+        const emojis = [':League:595322670023835674', '💬', '👮', '🔊']
 
+        sendEmbed()
+        // enviar embed com reaction
+        function sendEmbed() {
 
+            Neable.sendMessage(embed, {
+                message: message.channel,
+                emojis: emojis
+            }).then(msg => {
 
+                const filter = (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id;
 
+                const collector = msg.Message.createReactionCollector(filter, { max: 1, time: 60000 });
 
-
-
-
-
-    if (!args[0]) {
-        ListOfCommands();
-    } else {
-        try {
-            folders = fs.readdirSync('./commands/')
-            folders.forEach(fold => {
-                archives = fs.readdirSync(`./commands/${fold}`)
-                archives.forEach(archive => {
-                    if (archive == `${args[0]}.js`) {
-                        console.log('1asd')
-                        request = require(`../../commands/${fold}/${archive}`)
-                        if (request.help.working == true) {
-                            message.channel.send(`Example: \`${request.help.example}\``)
-                        }
-                        if (request.help.specialNote) {
-                            message.channel.send(`Note: ${request.help.specialNote}`)
-                        }
-                    }
+                collector.on('collect', (asd) => {
+                    console.log(asd)
                 })
             })
-        } catch (err) {
-            console.log(err)
-            return message.reply('Command *`' + args[0] + '`* not found. You can see all my commands using `b.help` or clicking in ➕').then(msg => {
+        }
+    }
+
+    async function SpecifiedCommand() {
+        commandFound = false;
+        folders = fs.readdirSync('./commands/')
+        folders.forEach(fold => {
+            archives = fs.readdirSync(`./commands/${fold}`)
+            archives.forEach(archive => {
+                if (archive == `${args[0]}.js`) {
+                    request = require(`../../commands/${fold}/${archive}`)
+                    if (request.help.working == true) {
+                        commandFound = true;
+                        message.channel.send(`Example: \`${request.help.example}\``)
+                    }
+                    if (request.help.specialNote) {
+                        message.channel.send(`Note: ${request.help.specialNote}`)
+                    }
+                }
+            })
+        })
+
+        if (commandFound == false) {
+
+            return message.reply('Comando *`' + args[0] + '`* não encontrado. Você pode ver meus comandos digitando *`b.help`* ou clicando em: ➕').then(msg => {
                 msg.react('➕')
 
                 const filter = (reaction, user) => {
@@ -98,7 +124,12 @@ module.exports.run = (Brie, message, args) => {
 
             })
         }
+
     }
+    // enviar lista de todos os comandos
+    if (!args[0]) ListOfCommands();
+    // procurar comando com o nome especifico
+    if (args[0]) SpecifiedCommand();
 
 }
 
