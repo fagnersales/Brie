@@ -33,4 +33,4 @@ module.exports.help = {
     usage: "b.kick [mention/id] [reason]",
     example: "b.kick @brie I'm just testing!!!",
     working: true
-}
+} 

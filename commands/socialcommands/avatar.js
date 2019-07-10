@@ -15,14 +15,14 @@ module.exports.run = async (Brie, message, args) => {
     }
 
     if (!user) return message.reply('Houve um erro na identificação do usuario!').then(msg => msg.delete(3000));
-    
+
     var avatar = (user.displayAvatarURL.endsWith("gif") ? avatar = `${user.displayAvatarURL}?size=2048` : avatar = `${user.displayAvatarURL}`);
 
     avatarEmbed = new Discord.RichEmbed()
         .setImage(avatar)
         .setColor('RANDOM')
 
-    user === message.author ? avatarEmbed.setFooter('You are seeing your own avatar!', message.author.displayAvatarURL) : avatarEmbed.setFooter(`You are seeing the avatar of: ${user.tag}`, message.author.displayAvatarURL)
+    user === message.author ? avatarEmbed.setFooter('Você está vendo seu próprio avatar!', message.author.displayAvatarURL) : avatarEmbed.setFooter(`Você está vendo o avatar de: ${user.tag}`, message.author.displayAvatarURL)
 
     message.channel.send(avatarEmbed)
 }
@@ -30,9 +30,9 @@ module.exports.run = async (Brie, message, args) => {
 module.exports.help = {
     name: "avatar",
     type: "social",
-    description: "See the avatar of an user!",
-    specialNote: "You can see users out of the server, but just works with the ID.",
-    usage: "b.avatar [ID/MENTION]",
+    description: "Veja o avatar de um usuário!",
+    specialNote: "Você pode ver usuários de qualquer lugar do DISCORD, mas só funcionam com o ID.",
+    usage: "b.avatar [ID/MENÇÃO]",
     example: "b.avatar @Brie",
     working: true
-}
+} 

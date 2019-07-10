@@ -41,18 +41,6 @@ module.exports.countdown = async (number) => {
     }
 
 }
-/**
- * Send a message into a specific channel
- * @param {string} content [string] The content that will be sent.
- * @param {string} [options.message] Where the message will be sent
- * @param {string} [options.emojis=[]] Emojis to react the message.
- * @returns {Message|Emoji} Message/Emoji
- * @example
- * MODULE.sendMessage("Hello World", {
- * message: message.channel,
- * emojis: ['🍎', '🍪']
- * });
- */
 module.exports.sendMessage = async (content, options) => {
     if (!content) throw new Error('Missing param "text" | You need set a content to be sent.');
     if (!options.message) throw new Error('Missing param "options.message" | You need set where the message will be sent.')
@@ -119,19 +107,6 @@ module.exports.helpByGif = (message, options = {}) => {
         return helpGif;
     }
 }
-/**Create a embed, follow this example:
- * @example
- * MODULE.createEmbed(message, {
-    title: 'Hello',
-    description: 'description',
-    field: [['Text one', 'Sub-text one'], ['hello', 'wolrd']],
-    footer: {
-        text: `Resqueted by: ${message.author.tag}`,
-        icon: message.author.displayAvatarURL
-    },
-    image: 'link here'
-})
- */
 module.exports.createEmbed = async (message, options = {}) => {
 
     if (message instanceof require('discord.js').Message) {

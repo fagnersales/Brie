@@ -1,72 +1,82 @@
-const Discord = require('discord.js');
 const fs = require('fs');
 const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
 
     // ler todos os comandos 
     async function ListOfCommands() {
-        var leagueCommands = '';
-        leagueCount = 0;
-        moreLeagueCommands = 0;
-        var moderationCommands = '';
-        moderationCount = 0;
-        moreModerationCommands = 0;
-        var socialCommands = '';
-        moreSocialCommands = 0;
-        socialCount = 0;
-        var musicCommands = '';
-        moreMusicCommands = 0;
-        musicCount = 0;
+      
+        var ComandosDeLOL = '';
+        contadorLOL = 0;
+        MaisComandosDeLOL = 0;
+        
+        var ComandosDeMODERACAO = '';
+        contadorMODERACAO = 0;
+        MaisComandosDeMODERACAO = 0;
+        
+        var ComandosDeSOCIAL = '';
+        MaisComandosDeSOCIAL = 0;
+        contadorSOCIAL = 0;
+        
+        var ComandosDeMUSICA = '';
+        MaisComandosDeMUSICA = 0;
+        contadorMUSICA = 0;
 
-        folders = fs.readdirSync('./commands/')
-        folders.forEach(fold => {
-            archives = fs.readdirSync(`./commands/${fold}`)
-            archives.forEach(archive => {
-                request = require(`../../commands/${fold}/${archive}`);
+        pastas = fs.readdirSync('./commands/')
+        pastas.forEach(pasta => {
+            arquivos = fs.readdirSync(`./commands/${pasta}`)
+            arquivos.forEach(arquivo => {
+                request = require(`../../commands/${pasta}/${arquivo}`);
                 let rh = request.help;
                 // listar todos os comandos que estão funcionando e em seguida listar por tipos
                 if (request.help.working == true) {
                     if (rh.type == 'league of legends') {
                         // league of legends commands
-                        leagueCommands += (`\`\`b.${rh.name}\`\` |`)
+                        ComandosDeLOL += (`\`\`b.${rh.name}\`\` |`)
                     }
                     else if (rh.type == 'social') {
-                        socialCount++;
-                        if (socialCount <= 3) {
-                            socialCommands += (`\`\`b.${rh.name}\`\` | `)
-                        } else if (socialCount > 3) {
-                            moreSocialCommands++
+                        contadorSOCIAL++;
+                        if (contadorSOCIAL <= 3) {
+                            ComandosDeSOCIAL += (`\`\`b.${rh.name}\`\` | `)
+                        } else if (contadorSOCIAL > 3) {
+                            MaisComandosDeSOCIAL++
                         }
                     }
                     else if (rh.type == 'moderation') {
-                        moderationCount++;
-                        if (moderationCount <= 3) {
-                            moderationCommands += (`\`\`b.${rh.name}\`\` | `);
-                        } else if (moderationCount > 3) {
-                            moreModerationCommands++;
+                        contadorMODERACAO++;
+                        if (contadorMODERACAO <= 3) {
+                            ComandosDeMODERACAO += (`\`\`b.${rh.name}\`\` | `);
+                        } else if (contadorMODERACAO > 3) {
+                            MaisComandosDeMODERACAO++;
                         }
                     }
                     else if (rh.type == 'music') {
-                        musicCount++;
-                        if (musicCount <= 2) {
-                            musicCommands += (`\`\`b.${rh.name}\`\` | `);
-                        } else if (musicCount > 3) {
-                            moreMusicCommands++;
+                        contadorMUSICA++;
+                        if (contadorMUSICA <= 2) {
+                            ComandosDeMUSICA += (`\`\`b.${rh.name}\`\` | `);
+                        } else if (contadorMUSICA > 3) {
+                            MaisComandosDeMUSICA++;
                         }
                     }
                 }
             })
         })
         // criar embed
+
+        MaisComandosDeLOL > 1 ? textoLOL = `${ComandosDeLOL} \`mais ${MaisComandosDeLOL} comandos...\`` : textoLOL = `${ComandosDeLOL}`;
+        MaisComandosDeSOCIAL > 1 ? textoSOCIAL = `${ComandosDeSOCIAL} \`mais ${MaisComandosDeSOCIAL} comandos...\`` : textoSOCIAL = `${ComandosDeSOCIAL}`;
+        MaisComandosDeMODERACAO > 1 ? textoMODERACAO = `${ComandosDeMODERACAO} \`mais ${MaisComandosDeMODERACAO} comandos...\`` : textoMODERACAO = `${ComandosDeMODERACAO}`;
+        MaisComandosDeMUSICA > 1 ? textoMUSICA = `${ComandosDeMUSICA} \`mais ${MaisComandosDeMUSICA} comandos...\`` : textoMUSICA = `${ComandosDeMUSICA}`
+
+
         const embed = await Neable.createEmbed({
             title: "Lista de Comandos:",
             field: [
-                [`<:League:595322670023835674> League of Legends:`, `${leagueCommands}`],
-                [`💬 Social:`, `${socialCommands} \`mais ${moreSocialCommands} comandos...\``],
-                [`👮 Moderação:`, `${moderationCommands} \`mais ${moreModerationCommands} comandos...\``],
-                [`🔊 Música:`, `\`b.play\` | ${musicCommands} \`mais ${moreMusicCommands} comandos...\``]
+                [`<:League:595322670023835674> League of Legends:`, `${textoLOL}`],
+                [`💬 Social:`, `${textoSOCIAL}`],
+                [`👮 Moderação:`, `${textoMODERACAO}`],
+                [`🔊 Música:`, `\`bb.play\` | ${textoMUSICA}`]
             ],
-            footer: [`Requerido por: ${message.author.tag}`, message.author.displayAvatarURL]
+            footer: [`${message.author.tag} Reaja para mais informações!`, message.author.displayAvatarURL]
         })
         // emojis 
         const emojis = [':League:595322670023835674', '💬', '👮', '🔊']
@@ -74,7 +84,7 @@ module.exports.run = async (Brie, message, args) => {
         sendEmbed()
         // enviar embed com reaction
         function sendEmbed() {
-
+ 
             Neable.sendMessage(embed, {
                 message: message.channel,
                 emojis: emojis
@@ -92,25 +102,25 @@ module.exports.run = async (Brie, message, args) => {
     }
 
     async function SpecifiedCommand() {
-        commandFound = false;
-        folders = fs.readdirSync('./commands/')
-        folders.forEach(fold => {
-            archives = fs.readdirSync(`./commands/${fold}`)
-            archives.forEach(archive => {
-                if (archive == `${args[0]}.js`) {
-                    request = require(`../../commands/${fold}/${archive}`)
+        comandoEncontrado = false;
+        pastas = fs.readdirSync('./commands/')
+        pastas.forEach(pasta => {
+            arquivos = fs.readdirSync(`./commands/${pasta}`)
+            arquivos.forEach(arquivo => {
+                if (arquivo == `${args[0]}.js`) {
+                    request = require(`../../commands/${pasta}/${arquivo}`)
                     if (request.help.working == true) {
-                        commandFound = true;
-                        message.channel.send(`Example: \`${request.help.example}\``)
+                        comandoEncontrado = true;
+                        message.channel.send(`Exemplo: \`${request.help.example}\``)
                     }
                     if (request.help.specialNote) {
-                        message.channel.send(`Note: ${request.help.specialNote}`)
+                        message.channel.send(`Nota: ${request.help.specialNote}`)
                     }
                 }
             })
         })
 
-        if (commandFound == false) {
+        if (comandoEncontrado == false) {
 
             return message.reply('Comando *`' + args[0] + '`* não encontrado. Você pode ver meus comandos digitando *`b.help`* ou clicando em: ➕').then(msg => {
                 msg.react('➕')

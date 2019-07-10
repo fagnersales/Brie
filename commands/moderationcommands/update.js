@@ -31,7 +31,7 @@ module.exports.run = async (Brie, message, args) => {
 
     args[0] ? newUpdate() : sendVersion();
 
-}
+} 
 
 module.exports.help = {
     name: "update",

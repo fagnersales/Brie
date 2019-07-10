@@ -58,7 +58,7 @@ module.exports.run = async (Brie, message, args) => {
             }
         })
     }
-    if (!args[0]) return message.reply(`You need to specifiy what I need to do, if you don't know, type *\`b.help findemoji\`*`)
+    if (!args[0]) return message.reply(`Você precisa especificar o que eu preciso fazer, caso não saiba digite: *\`b.help findemoji\`*`)
     args[0] == "use" ? useEmoji(args[1]) : EmojiList();
 
 }
@@ -66,8 +66,8 @@ module.exports.run = async (Brie, message, args) => {
 module.exports.help = {
     name: "findemoji",
     type: "social",
-    description: "Find an emoji on my system!",
-    usage: "b.findemoji [name] & b.findemoji use [ID]",
+    description: "Encontre um emoji no meu sistema e me faça usá-lo!",
+    usage: "b.findemoji [nome] & b.findemoji use [ID]",
     example: "b.findemoji [prefix] & b.findemoji use 594342426949320739",
     working: true
-}
+} 

@@ -87,15 +87,27 @@ Brie.on('message', async message => {
 
 });
 
+Brie.on('message', async message => {
+    const Sugestao = require('./models/sugestao.js');
+    Sugestao.findOne({
+        serverID: message.guild.id
+    }, async (err, canal) => {
+        if (err) console.log(err);
+        if (canal) {
+            if (message.channel.id == canal.channelID) {
+                await message.react('👍');
+                await message.react('👎');
+            }
+        }
+    })
+})
+
 Brie.on("message", async message => {
     if (message.guild.id == '589795008467435521') {
-        if (message.content.startsWith(prefix) && message.author.id !== '474407357649256448') {
+        users = ['453697694339301376', '474407357649256448']
+        if (message.content.startsWith(prefix) && !users.includes(message.author.id)) {
             return message.reply(`Estou em fase de criação neste servidor, então só meu dono pode usar meus comandos!`).then(msg => msg.delete(6000))
         }
-    }
-    if (message.channel.id == '595025940158087189') {
-        await message.react('👍')
-        await message.react('👎')
     }
 
     if (message.author.bot || message.channel.type === "dm") return;
@@ -216,7 +228,7 @@ Brie.on('message', async (message) => {
 
     //economizar espaço
     mc = message.content;
-    if (mc.startsWith('b.play')) {
+    if (mc.startsWith('bb.play')) {
         // canal de voz que o usuário está
         voiceChannel = message.member.voiceChannel;
         // se não estiver 
@@ -257,10 +269,14 @@ Brie.on('message', async (message) => {
                         Escolha uma das músicas pelo número correspondente!`
                     });
                     try {
-                        var response = await message.channel.awaitMessages(msg2 => msg2.content >= 0 && msg2.content <= 5 && msg2.author.id === message.author.id, {
+                        message.channel.awaitMessages(msg2 => msg2.author.id === message.author.id, {
                             max: 1,
                             time: 15000,
                             errors: ['time']
+                        }).then((response) => {
+                            if (response.message.content.includes(['1', '2', '3', '4', '5'])) {
+                                return message.channel.send(`Valor inválido, cancelando a seleçãode música.`)
+                            }
                         })
                     } catch (err) {
                         console.error(err);
@@ -311,8 +327,7 @@ async function handleVideo(video, message, voiceChannel, playlist = false) {
             // dps que tocar a musica
             await Neable.createEmbed(message, {
                 title: `Começando a tocar!`,
-                field: [['Título:', `${songRequested.title}`],
-                ['URL:', `${songRequested.url}`]]
+                description: `(${songRequested.title})[${songRequested.url}]`
             })
             // se não conseguir conectar
         } catch (error) {
@@ -328,8 +343,7 @@ async function handleVideo(video, message, voiceChannel, playlist = false) {
         if (playlist) return
         else return Neable.createEmbed(message, {
             title: `Nova música adicionada!`,
-            field: [['Título:', `${songRequested.title}`],
-            ['URL:', `${songRequested.url}`]]
+            description: `(${songRequested.title})[${songRequested.url}]`
         })
     }
 
@@ -353,11 +367,13 @@ function playTheSong(guild, songRequested) {
     dispatcher.on('end', () => {
         // remover a primeira música (no caso a que acabou de tocar)
         serverQueue.songs.shift();
-        if (serverQueue.songs.length > 1) {
+        if (serverQueue.songs.length >= 1) {
             // chamando a função novamente com a primeira música.
             playTheSong(guild, serverQueue.songs[0]);
-        } else {
+
+        } else if (serverQueue.songs.length == 0) {
             // sair do canal de voz que foi conectado anteriormente
+            queue.delete(guild.id);
             voiceChannel.leave();
         }
 

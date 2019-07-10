@@ -86,7 +86,7 @@ module.exports.run = (Brie, message, args) => {
                         console.log(`${chalk.bold.green('NEW')} | ${chalk.bold.blue(message.guild.name)} Editou um novo canal de bem-vindo!`)
                     }).catch((err) => console.log(err));
             }
-        }
+        } 
     })
 
 

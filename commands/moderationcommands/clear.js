@@ -1,6 +1,6 @@
 const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
-    if (message.author.id !== message.guild.ownerID) return; 
+    if (message.author.id !== message.guild.ownerId) return; 
     // Command here.
     async function clearChannel(channel, n = 0, old = false) {
         let collected = await channel.fetchMessages();
@@ -18,7 +18,7 @@ module.exports.run = async (Brie, message, args) => {
             return n + await clearChannel(channel, old);
         } else return 0;
     }
-
+ 
     clearChannel(message.channel)
 }
 

@@ -1,37 +1,68 @@
 const Discord = require('discord.js');
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('../../neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
 
-    FetchUser = args.join(" ");
-
+    EncontrarUsuario = args.join(" ");
+    if (!EncontrarUsuario) return message.reply('cade o usuario rapaz')
     try {
-        const userFound = await Brie.fetchUser(FetchUser)
-        avatar = userFound.avatarURL.endsWith(".gif") ? avatar = userFound.avatarURL + "?size=2048" : avatar = userFound.avatarURL
-        message.channel.send(new Discord.RichEmbed()
-            .setColor('RANDOM')
-            .setTitle(`Simple Profile of: ${userFound.username}`)
-            .addField('Name:', userFound.username)
-            .addField('ID:', userFound.id)
-            .addField('Discriminator:', "#" + userFound.discriminator)
-            .setImage(avatar)
-            .setFooter(`Requested By: ${message.author.tag}`, message.author.displayAvatarURL))
+        const usuarioEncontrado = await Brie.fetchUser(EncontrarUsuario)
+        avatar = usuarioEncontrado.avatarURL.endsWith(".gif") ? avatar = usuarioEncontrado.avatarURL + "?size=2048" : avatar = usuarioEncontrado.avatarURL
+        Neable.createEmbed(message, {
+            title: `Usuário encontrado: ${usuarioEncontrado.tag}`,
+            field: [[`Nome:`, usuarioEncontrado.username], [`ID:`, usuarioEncontrado.id], [`TAG:`, "#" + usuarioEncontrado.discriminator]],
+            image: avatar,
+            footer: [`Comando por: ${message.author.tag}`, message.author.displayAvatarURL]
+        })
     } catch (error) {
         try {
-            Brie.users.map((User) => {
-                if (User.username === FetchUser || User.discriminator == FetchUser) {
-                    avatar = User.avatarURL.endsWith(".gif") ? avatar = User.avatarURL + "?size=2048" : avatar = User.avatarURL
-                    message.channel.send(new Discord.RichEmbed()
-                        .setColor('RANDOM')
-                        .setTitle(`Simple Profile of: ${User.username}`)
-                        .addField('Name:', User.username)
-                        .addField('ID:', User.id)
-                        .addField('Discriminator:', "#" + User.discriminator)
-                        .setImage(avatar)
-                        .setFooter(`Requested By: ${message.author.tag}`, message.author.displayAvatarURL))
+            Tags = "";
+            UsuarioPorTAG = [];
+            if (EncontrarUsuario.length < 5) {
+                
+                Brie.users.map((Usuario) => {
+                    if (Usuario.discriminator.includes(EncontrarUsuario)) {
+                        UsuarioPorTAG.push(`# ${Usuario.tag}`)
+                    }
+                });
+                console.log(UsuarioPorTAG.length)
+                if (UsuarioPorTAG.length == 0) {
+                    return message.reply(`ERROR 404: Não pude encontrar nenhum usuário com esta TAG!`)
+                } else {
+                    
+                    indexmore = 0;
+                    index = 0;
+
+                    for (let tag of UsuarioPorTAG) {
+                        index++;
+                        if (index > 10) {
+                            indexmore++;
+                        } else {
+                            Tags += (tag + "\n");
+                        }
+                    }
+
+                    if(indexmore > 1) {
+                        Tags += (`Mais ${indexmore} usuários encontrados...`)
+                    }
+
+                    Neable.createEmbed(message, { description: `\`\`\`md\n${Tags}\`\`\`` })
+
                 }
-            })
+            } else {
+                Brie.users.map((Usuario) => {
+                    if (Usuario.username == EncontrarUsuario || Usuario.tag == EncontrarUsuario) {
+                        Neable.createEmbed(message, {
+                            title: `Usuário encontrado: ${Usuario.tag}`,
+                            field: [[`Nome:`, Usuario.username], [`ID:`, Usuario.id], [`TAG:`, "#" + Usuario.discriminator]],
+                            image: Usuario.displayAvatarURL,
+                            footer: [`Comando por: ${message.author.tag}`, message.author.displayAvatarURL]
+                        })
+                    }
+                })
+            }
         } catch (error) {
-            message.reply(`I could not find that use, you can try another way to find him! Check in *\`b.help finduser\`*`)
+            if (error) console.log(error)
+            message.reply(`ERROR 404: Não pude encontrar nenhum usuário com essas informações.... *\`b.help finduser\`*`)
         }
     }
 }
@@ -39,8 +70,8 @@ module.exports.run = async (Brie, message, args) => {
 module.exports.help = {
     name: "finduser",
     type: "social",
-    description: "Find an user on discord by ID",
-    usage: "b.finduser [ID/Name]",
-    example: "b.finduser 578067057006870569",
+    description: "Encontre um usuário do DISCORD pelo ID ou nos meus bancos de dados por NOME ou TAG!",
+    usage: "b.finduser [ID/NOME/TAG]",
+    example: "b.finduser 6565",
     working: true
-}
+} 

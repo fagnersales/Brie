@@ -8,7 +8,7 @@ module.exports.run = async (Brie, message, args) => {
     let reason = args.slice(1).join(" ");
     if (!reason) reason = `The reason was not defined.`
     if (!user) return message.reply(`You need to say who I'll ban by MENTION/ID`);
-
+ 
     try {
         message.guild.member(user).ban(reason)
     } catch (error) {

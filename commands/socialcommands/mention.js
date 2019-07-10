@@ -2,90 +2,87 @@ const Discord = require('discord.js');
 const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = (Brie, message, args) => {
 
+    EmbedDaMenção = new Discord.RichEmbed()
 
-    mentionEmbed = new Discord.RichEmbed()
+    EncontrarMensagem = args[0];
 
-    findMessage = args[0];
-
-    if (!findMessage) return message.reply('Please, choose some way to get the message [LINK or ID]').then(msg => msg.delete(6000))
+    if (!EncontrarMensagem) return message.reply('ERROR 400: Por favor, escolha uma forma para eu encontrar a mensagem! [LINK/ID]').then(msg => msg.delete(6000))
 
     response = args.slice(1).join(' ');
     message.delete();
 
     messageChannel = message.channel.id;
 
-    findMessageURL = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+    URL = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
 
-    checkURL = findMessageURL.test(findMessage) // if true = it is a link.
+    checkURL = URL.test(EncontrarMensagem) // if true = it is a link.
 
-    checkID = isNaN(findMessage) // if true = it is not a number.
+    checkID = isNaN(EncontrarMensagem) // if true = it is not a number.
+
     if (checkURL == true) {
-        lastCharacter = findMessage.charAt(findMessage.length - 1);
+        lastCharacter = EncontrarMensagem.charAt(EncontrarMensagem.length - 1);
         if (lastCharacter == '/') {
 
-            lastCharacter = findMessage.charAt(findMessage.length - 2);
-            messageChannel = findMessage.slice(-38, -20)
-            findMessage = findMessage.slice(-19, - 2)
+            lastCharacter = EncontrarMensagem.charAt(EncontrarMensagem.length - 2);
+            messageChannel = EncontrarMensagem.slice(-38, -20)
+            EncontrarMensagem = EncontrarMensagem.slice(-19, - 2)
 
         } else {
 
-            lastCharacter = findMessage.charAt(findMessage.length - 1);
-            messageChannel = findMessage.slice(-37, -19)
-            findMessage = findMessage.slice(-18, -1)
+            lastCharacter = EncontrarMensagem.charAt(EncontrarMensagem.length - 1);
+            messageChannel = EncontrarMensagem.slice(-37, -19)
+            EncontrarMensagem = EncontrarMensagem.slice(-18, -1)
         }
 
-        findMessage = findMessage + lastCharacter
+        EncontrarMensagem = EncontrarMensagem + lastCharacter
 
     } else if (checkID == false) {
-        findMessage = findMessage;
+        EncontrarMensagem = EncontrarMensagem;
     }
 
     /*Colocar para dar fetch mesmo que o canal*/
     messageChannel = message.guild.channels.find(channel => channel.id == messageChannel)
 
+    messageChannel.fetchMessage(EncontrarMensagem)
+        .then(mensagemMencionada => {
 
-    messageChannel.fetchMessage(findMessage)
-        .then(messageMentioned => {
-
-            if (messageMentioned.author.bot) {
-                return message.reply('You can not mention a message from bot.');
+            if (mensagemMencionada.author.bot) {
+                return message.reply('Você não pode mencionar a mensagem de um bot!');
             }
 
-
-            embedMention = new Discord.RichEmbed()
+            EmbedDaMenção = new Discord.RichEmbed()
                 .setColor('RANDOM')
-                .setFooter('React this message after you read the same! (will be deleted in 120s)')
+                .setFooter('Clique em 👁 depois de ler! (Será deletada automaticamente em 120s)')
             if (response) {
-                embedMention.setDescription(`Message Mentioned: \`\`\`md\n#${messageMentioned.author.username}: ${messageMentioned.content}\`\`\`
-Response: \`\`\`md\n#${message.author.username}: ${response}\`\`\``)
+                EmbedDaMenção.setDescription(`Mensagem mencionada: \`\`\`md\n#${mensagemMencionada.author.username}: ${mensagemMencionada.content}\`\`\`
+Resposta: \`\`\`md\n#${message.author.username}: ${response}\`\`\``)
             } else {
-                embedMention.setDescription(`\`You can also answer the message putting after the ID/LINK\`
-Message Mentioned: \`\`\`md\n#${messageMentioned.author.username}: ${messageMentioned.content}\`\`\`
-Mentioned By: ${message.author.username}`)
+                EmbedDaMenção.setDescription(`\`Você também pode responder diretamente a mensagem colocando a resposta após o ID/LINK\`
+Mensagem mencionada: \`\`\`md\n#${mensagemMencionada.author.username}: ${mensagemMencionada.content}\`\`\`
+Mencionada por: ${message.author.username}`)
             }
 
-            message.channel.send(embedMention).then(embedMentioned => {
+            message.channel.send(EmbedDaMenção).then(EmbedDaMenção => {
 
-
-                // messageMentioned.createReactionCollector()  finish it.
-                embedMentioned.react('👁');
+                // mensagemMencionada.createReactionCollector()  finish it.
+                EmbedDaMenção.react('👁');
 
                 const filter = (reaction, user) => {
-                    return reaction.emoji.name === '👁' && user.id === message.author.id || user.id === messageMentioned.author.id;
+                    return reaction.emoji.name === '👁' && user.id === message.author.id || user.id === mensagemMencionada.author.id;
                 }
 
-                embedMentioned.awaitReactions(filter, { max: 1, time: 120 * 1000, errors: ['time'] })
+                EmbedDaMenção.awaitReactions(filter, { max: 1, time: 120 * 1000, errors: ['time'] })
                     .then(() => {
-                        embedMentioned.delete()
+                        EmbedDaMenção.delete()
                     })
                     .catch(() => {
-                        embedMentioned.delete()
+                        EmbedDaMenção.delete()
                     })
 
             });
 
         }).catch((err) => {
-            message.reply(`Sorry but I couldn't find the message by this way, try another way or check the LINK/ID`).then(msg => msg.delete(6000))
+            message.reply(`ERROR 404: Me desculpe mas não pude encontrar a mensagem. Tente novamente!`).then(msg => msg.delete(6000))
         })
 
 
@@ -95,8 +92,8 @@ Mentioned By: ${message.author.username}`)
 module.exports.help = {
     name: 'mention',
     type: "social",
-    description: 'Mention a message',
+    description: 'Mencione uma mensagem!',
     usage: "b.mention [ID/LINK]",
     example: "b.mention 593177485139509279",
     working: true
-}
+} 

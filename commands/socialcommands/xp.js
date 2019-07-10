@@ -1,17 +1,19 @@
 const Level = require('../../models/level.js');
 const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = (Brie, message, args) => {
-    let user = message.mentions.members.first() || message.author;
+
+    Usuario = message.mentions.members.first() || message.author
+
     Level.findOne({
-        userID: user.id,
+        userID: Usuario.id,
         serverID: message.guild.id
     }, (err, xpSystem) => {
         if (err) console.log(err);
         if (!xpSystem) {
-            return message.channel.send(`you don't have money yet!`)
+            return message.channel.send(`ERROR 404: Você ainda não tem nivel!`)
         } else {
             return Neable.createEmbed(message, {
-                title: 'XP de ' + user.user.username,
+                title: `Usuário: ${Usuario.username}`,
                 description: `XP: ${xpSystem.xp} / LEVEL: ${xpSystem.level}`,
                 footer: [message.author.tag, message.author.displayAvatarURL]
             })
@@ -24,8 +26,8 @@ module.exports.run = (Brie, message, args) => {
 module.exports.help = {
     name: "xp",
     type: "social",
-    description: "Veja seu nível e xp!",
-    usage: "b.xp [user]",
+    description: "Veja seu nível atual no servidor!",
+    usage: "b.xp | b.xp [MENÇÃO/ID]",
     example: "b.xp | b.xp @Brie",
     working: true
-}
+} 

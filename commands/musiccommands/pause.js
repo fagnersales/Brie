@@ -23,4 +23,4 @@ module.exports.help = {
     usage: "b.volume [valor]",
     example: "b.volume 5",
     working: true
-}
+} 

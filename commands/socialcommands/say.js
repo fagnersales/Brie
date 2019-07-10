@@ -2,19 +2,19 @@ const Neable = require('c:/Brie/neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
 
 
-    TestURL = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+    TestarURL = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
 
     messageContent = args.slice(0).join(" ");
 
-    if (message.attachments.first()) return message.reply(`Archives isn't something to say...`);
+    if (message.attachments.first()) return message.reply(`ERROR 401: Eu não posso repetir arquivos!`);
 
-    if (message.content.includes('@everyone') || message.content.includes('@here')) return message.reply('Are you trying to mention everyone??');
+    if (message.content.includes('@everyone') || message.content.includes('@here')) return message.reply(`ERROR 505: Eu não posso todos do servidor!`);
 
-    if (message.mentions.roles.first()) return message.reply('Heey, I can not mention a role!');
+    if (message.mentions.roles.first()) return message.reply('Heey, eu não posso mencionar cargos!');
 
-    if (!messageContent) return message.reply(`You have to say something for me to say!`)
+    if (!messageContent) return message.reply(`ERROR 404: Não encontrei o que eu tenho que dizer...`)
 
-    TestURL.test(messageContent) ? err() : say(messageContent)
+    TestarURL.test(messageContent) ? err() : say(messageContent)
 
     function say(messageContent) {
         message.delete();
@@ -22,7 +22,7 @@ module.exports.run = async (Brie, message, args) => {
     }
 
     function err() {
-        message.reply(`Sorry, I can not say links!`);
+        message.reply(`Me desculpe, mas não posso enviar links!`);
     }
 
 }
@@ -30,8 +30,8 @@ module.exports.run = async (Brie, message, args) => {
 module.exports.help = {
     name: "say",
     type: "social",
-    description: "Makes me say something!",
-    usage: "b.say [text]",
-    example: "b.say Hello World!",
+    description: "Me faça falar alguma coisa!",
+    usage: "b.say [texto]",
+    example: "b.say Oi, eu sou a Brie!",
     working: true
-}
+} 

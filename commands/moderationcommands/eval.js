@@ -22,7 +22,7 @@ module.exports.run = async (Brie, message, args) => {
     } catch(e) {
         message.channel.send(e);
     }
-}
+} 
 
 module.exports.help = {
     name: 'eval'

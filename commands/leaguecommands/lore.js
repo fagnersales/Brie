@@ -3,20 +3,18 @@ const request = require('request');
 const Discord = require("discord.js");
 module.exports.run = async (Brie, message, args) => {
     // Command here.
-    name = args[0];
+    nomeDoCampeao = args[0];
 
-    request('http://ddragon.leagueoflegends.com/cdn/9.13.1/data/pt_BR/champion/' + name + '.json', function (err, response, body) {
+    request('http://ddragon.leagueoflegends.com/cdn/9.13.1/data/pt_BR/champion/' + nomeDoCampeao + '.json', function (err, response, body) {
         if (!err && response.statusCode == 200) {
             json = JSON.parse(body)
-
             lore = " " + json.data[`${name}`].lore
-
             message.channel.send(new Discord.RichEmbed()
                 .setColor('RANDOM')
                 .setTitle(`Lore da(o) campeã(o) ${name}, ${json.data[`${name}`].title}`)
                 .setDescription(lore))
         } else {
-            message.channel.send(`Não utilize espaços ou ' para procurar pelo campeão! \`Ex: Kai'Sa = Kaisa | Lee Sin = Leesin\``)
+            message.channel.send(`Error 404: Não pude encontrar este campeão, veja um exemplo de como usar corretamente! \` Kai'Sa = Kaisa | Lee Sin = Leesin\``)
         }
     })
 }
@@ -24,7 +22,7 @@ module.exports.run = async (Brie, message, args) => {
 module.exports.help = {
     name: "lore",
     type: "league of legends",
-    description: "Get the lore of a champion!",
+    description: "Veja a lore de um campeão!",
     usage: "b.lore [name]",
     example: "b.lore Yasuo",
     working: true
