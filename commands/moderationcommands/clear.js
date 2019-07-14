@@ -1,32 +1,39 @@
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('../../neable_module/NeableCommands.js')
 module.exports.run = async (Brie, message, args) => {
-    if (message.author.id !== message.guild.ownerId) return; 
     // Command here.
-    async function clearChannel(channel, n = 0, old = false) {
-        let collected = await channel.fetchMessages();
-        if (collected.size > 0) {
-            if (old) {
-                for (let msg of collected.array()) {
-                    await msg.delete();
-                    n++;
-                }
-            } else {
-                let deleted = await channel.bulkDelete(100, true);
-                if (deleted.size < collected.size) old = true;
-                n += deleted;
-            }
-            return n + await clearChannel(channel, old);
-        } else return 0;
+    if (!message.member.hasPermission(['MANAGE_MESSAGES'])) return message.reply(`Você não tem permissão para apagar mensagens!`).then(msg => msg.delete(6000))
+
+    if (!message.guild.member(Brie.user.id).hasPermission(['MANAGE_MESSAGES'])) return message.reply(`Preciso da permissão \`MANAGE_MESSAGES\` para fazer isto!`);
+
+    const mention = message.mentions.members.first();
+
+    if (mention) {
+
+        message.channel.fetchMessages()
+            .then(messages => {
+                console.log(`${messages.filter(m => m.author.id === mention.id).forEach((result) => console.log(result.content))}`)
+            })
+            .catch(console.error);
+
+    } else {
+        const quantidadeDeletar = parseInt(args[0], 10);
+
+        if (!quantidadeDeletar || quantidadeDeletar < 2 || quantidadeDeletar > 100)
+
+            return message.reply("Por favor, forneça um número entre 2 e 100 para o número de mensagens a serem excluídas");
+
+        const fetched = await message.channel.fetchMessages({ limit: quantidadeDeletar });
+
+        message.channel.bulkDelete(fetched)
+            .catch(error => message.reply(`Não foi possível deletar mensagens devido a: $ { error }`));
     }
- 
-    clearChannel(message.channel)
 }
 
 module.exports.help = {
     name: "clear",
     type: "moderation",
-    description: "Delete all messages of a channel",
-    usage: "b.clear",
-    example: "b.clear",
+    description: "Apague mensagens do canal!",
+    usage: "b.clear [quantidade] [membro]",
+    example: "b.clear 50",
     working: true
 }

@@ -1,3 +1,7 @@
 # ignorar node_modules
 node_modules
-nodemon.json  
+nodemon.json
+test.js
+newIndex.js
+commands/neable
+neable_module/NeableTest.js

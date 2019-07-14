@@ -1,22 +1,40 @@
 const fs = require('fs');
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('../../neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
 
     // ler todos os comandos 
+    function sendSpecificHelp(theme) {
+
+        let themeHelp = "";
+
+        pasta = fs.readdirSync(`./commands/${theme}`);
+        pasta.forEach(arquivo => {
+            request = require(`../../commands/${theme}/${arquivo}`);
+            if (request.help.working === false) return;
+            themeHelp += (`**${request.help.name.toUpperCase()}** | __${request.help.description}__
+\`${request.help.usage}\`\n\n`)
+        })
+
+        Neable.createEmbed(message, {
+            description: themeHelp
+        })
+    }
+
     async function ListOfCommands() {
-      
+
+
         var ComandosDeLOL = '';
         contadorLOL = 0;
         MaisComandosDeLOL = 0;
-        
+
         var ComandosDeMODERACAO = '';
         contadorMODERACAO = 0;
         MaisComandosDeMODERACAO = 0;
-        
+
         var ComandosDeSOCIAL = '';
         MaisComandosDeSOCIAL = 0;
         contadorSOCIAL = 0;
-        
+
         var ComandosDeMUSICA = '';
         MaisComandosDeMUSICA = 0;
         contadorMUSICA = 0;
@@ -80,22 +98,43 @@ module.exports.run = async (Brie, message, args) => {
         })
         // emojis 
         const emojis = [':League:595322670023835674', '💬', '👮', '🔊']
+        const emojisFilter = ['♥']
 
         sendEmbed()
         // enviar embed com reaction
         function sendEmbed() {
- 
+
             Neable.sendMessage(embed, {
                 message: message.channel,
                 emojis: emojis
-            }).then(msg => {
+            }).then(result => {
+                msg = result.Message;
 
-                const filter = (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id;
+                const filter = (reaction, user) => !emojisFilter.includes(reaction.emoji.name) && user.id === message.author.id;
 
-                const collector = msg.Message.createReactionCollector(filter, { max: 1, time: 60000 });
+                const collector = msg.createReactionCollector(filter, { max: 1, time: 60000 });
 
-                collector.on('collect', (asd) => {
-                    console.log(asd)
+                collector.on('collect', (collected) => {
+
+                    emojiName = collected.emoji.name;
+
+                    console.log(`${Neable.blue('COLLECTED')} | Um emoji foi coletado: ${emojiName}`);
+
+                    switch (emojiName) {
+
+                        case "League": sendSpecificHelp("leaguecommands");
+                            break;
+
+                        case "💬": sendSpecificHelp("socialcommands");
+                            break;
+
+                        case "👮": sendSpecificHelp("moderationcommands");
+                            break;
+
+                        case "🔊": sendSpecificHelp("musiccommands");
+                            break;
+                        default: message.reply(`O que está tentando fazer? 🤔`);
+                    }
                 })
             })
         }

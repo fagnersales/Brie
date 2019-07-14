@@ -1,5 +1,5 @@
 const Level = require('../../models/level.js');
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('../../neable_module/NeableCommands');
 module.exports.run = (Brie, message, args) => {
 
     Usuario = message.mentions.members.first() || message.author
@@ -12,8 +12,10 @@ module.exports.run = (Brie, message, args) => {
         if (!xpSystem) {
             return message.channel.send(`ERROR 404: Você ainda não tem nivel!`)
         } else {
+            console.log(Usuario.nickname);
+
             return Neable.createEmbed(message, {
-                title: `Usuário: ${Usuario.username}`,
+                title: `Usuário: ${Usuario.nickname}`,
                 description: `XP: ${xpSystem.xp} / LEVEL: ${xpSystem.level}`,
                 footer: [message.author.tag, message.author.displayAvatarURL]
             })

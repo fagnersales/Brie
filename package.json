@@ -1,0 +1,42 @@
+{
+  "name": "Brie",
+  "version": "1.0.0",
+  "description": "All commands of my discord.js robot (Brie);",
+  "main": "bot.js",
+  "dependencies": {
+    "brain.js": "^1.6.1",
+    "chalk": "^2.4.2",
+    "cheerio": "^1.0.0-rc.3",
+    "discord.js": "^11.5.1",
+    "eslint": "^6.0.1",
+    "events": "^3.0.0",
+    "figlet": "^1.2.3",
+    "fsevents": "^1.2.9",
+    "init": "^0.1.2",
+    "jimp": "^0.6.4",
+    "mongodb": "^3.2.7",
+    "mongoose": "^5.6.2",
+    "nan": "^2.14.0",
+    "nodemon": "^1.19.1",
+    "opusscript": "^0.0.6",
+    "request": "^2.88.0",
+    "simple-youtube-api": "^5.2.1",
+    "superagent": "^5.1.0",
+    "ytdl-core": "^0.29.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neable6565/Brie.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neable6565/Brie/issues"
+  },
+  "homepage": "https://github.com/Neable6565/Brie#readme"
+}

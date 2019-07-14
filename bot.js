@@ -3,7 +3,7 @@ const { Util } = require('discord.js');
 const Brie = new Discord.Client({ fetchAllMembers: true });
 const prefix = "b.";
 const fs = require("fs");
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('./neable_module/NeableCommands');
 mentionEmoji = "🍪";
 const TimeoutEXP = new Set();
 const ytdl = require('ytdl-core');
@@ -88,6 +88,7 @@ Brie.on('message', async message => {
 });
 
 Brie.on('message', async message => {
+    if (message.channel.type == 'dm') return;
     const Sugestao = require('./models/sugestao.js');
     Sugestao.findOne({
         serverID: message.guild.id
@@ -161,6 +162,18 @@ Brie.on("raw", async event => {
         return
     }
 });
+Brie.on("message", async message => {
+    if (message.author.bot) return; // se o author da menasgem for um bot
+    if (message.channel.type == "dm") return; // se a mensagem vier do privado (dm) retorna;
+    if (message.content.startsWith('<@494998062461353988>')) {
+
+        message.channel.send(new Discord.RichEmbed()
+            .setTitle(`Olá ${message.author.tag} está perdido?`)
+            .setDescription('Opa, se você se encontra com dúvidas doque eu posso fazer diriga-se rápidamente a um chat de comandos e digite: ' + '`s!ajuda`')
+            .setThumbnail(Brie.user.avatarURL)
+            .setFooter(`</AlekkiBOT> © Todos os direitos reservados.`, message.author.avatarURL))
+    }
+})
 
 Brie.on('ready', () => {
     const figlet = require('figlet');
@@ -194,8 +207,20 @@ Brie.on('ready', () => {
     console.log(`USERS SIZE ${chalk.bold.green(server.memberCount)}`)
     console.log(`INVITE LINK ${chalk.bold.blue('https://discord.gg/JWECGU8')}`)
 
-});
+    let list = [
+        { name: `b. | Em ${Brie.guilds.size} servidores!`, type: 'PLAYING' },
+        { name: `b. | Em ${Brie.channels.size} canais!`, type: 'PLAYING' },
+        { name: `b. | Com ${Brie.users.size} usuários!`, type: 'PLAYING' },
+    ];
 
+    function randomize() {
+        let random = list[Math.floor(Math.random() * list.length)];
+        Brie.user.setPresence({ game: random });
+    }
+
+    setInterval(() => { randomize() }, 20000)
+
+});
 
 Brie.on('guildMemberRemove', member => {
     if (member.guild.id !== "594311437212450827") return;
@@ -212,8 +237,8 @@ Brie.on('guildMemberAdd', member => {
             console.log(`doesn't exist`)
         } else {
             welcomeChannel = member.guild.channels.find(c => c.id === wc.welcomeChannelID)
-            test = wc.welcomeMessage.replace('{Membro}', member.user.username)
-            welcomeChannel.send(test)
+            welcome = wc.welcomeMessage.replace('{Membro}', member)
+            welcomeChannel.send(welcome)
         }
     })
 });

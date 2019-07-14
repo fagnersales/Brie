@@ -1,5 +1,7 @@
 const discord = require('discord.js');
 const NeableEvents = require('./NeableEvents.js');
+const chalk = require('chalk');
+
 /**
  * Transform your string in CharCode
  * @param {string} content Put your text here.
@@ -125,7 +127,23 @@ module.exports.createEmbed = async (message, options = {}) => {
 
     options.timestamp ? Embed.setTimestamp() : false
 
-    options.footer ? options.footer.length == 2 ? Embed.setFooter(options.footer[0], options.footer[1]) : Embed.setFooter(options.footer[0]) : false
+    if (options.footer) {
+        if (options.footer.length == 2) {
+            Embed.setFooter(options.footer[0], options.footer[1]);
+        } else if (options.footer.length == 1 && options.footer[0] !== 'default') {
+
+        }
+        if (options.footer[0] == 'default') {
+
+            Embed.setFooter(message.author.tag, message.author.displayAvatarURL)
+
+        }
+
+    } else {
+
+        options.footer ? options.footer.length == 2 ? Embed.setFooter(options.footer[0], options.footer[1]) : Embed.setFooter(options.footer[0]) : false
+
+    }
 
     options.thumbnail ? Embed.setThumbnail(options.thumbnail) : false
 
@@ -138,6 +156,7 @@ module.exports.createEmbed = async (message, options = {}) => {
     }
 
     if (options.field) {
+
         for (let field of options.field) {
             Embed.addField(field[0], field[1])
         }
@@ -151,9 +170,167 @@ module.exports.createEmbed = async (message, options = {}) => {
     }
 
 }
+/**
+ * Se começar com o segundo parametro retorna true se não false;
+ */
+module.exports.startswith = (mensagemDoUsuario, ComecaCom, sensibilidade = false) => {
+
+
+    mensagem = mensagemDoUsuario.slice(ComecaCom.length);
+
+    if (sensibilidade == true) {
+        ComecoDaMensagem = mensagemDoUsuario.slice(0, ComecaCom.length);
+
+        if (ComecoDaMensagem === ComecaCom) {
+            console.log(`\n${textOrange("COM SENSIBILIDADE")} "${textBlue(ComecoDaMensagem)}" é compatível com: "${textBlue(ComecaCom)}"`)
+            return mensagem;
+        } else {
+            return false;
+        }
+
+    }
+    if (sensibilidade == false) {
+
+        data = mensagemDoUsuario.toLowerCase()
+
+        if (data.startsWith(ComecaCom)) {
+
+            console.log(`\n${textOrange("SEM SENSIBILIDADE")} "${textBlue(data)}" é compatível com: "${textBlue(ComecaCom)}"`)
+            if (mensagem.length == 0) {
+                return true
+            } else {
+                return mensagem
+            }
+
+        } else {
+            return false;
+        }
+    }
+}
+
+module.exports.ArrayRemove = (array, index) => {
+
+    if (typeof (array) == Array) {
+        return console.log(`Primeiro parametro precisa ser array`);
+    };
+
+    if (isNaN(index)) {
+        return console.log(`Segundo parametro precisa ser numérico`);
+    }
+
+    if (index > array.length) {
+        return console.log(`Index maior que a quantidade de elementos (${array.length})`);
+    }
+
+    position = 0;
+    newArray = [];
+    array.forEach(result => {
+
+        position++;
+
+        if (position == index) return;
+
+        newArray.push(result);
+    })
+
+    return newArray;
+}
+
+module.exports.ArrayAdd = (array, index, data) => {
+
+    position = 0;
+    newArray = [];
+
+    if (typeof (array) == Array) {
+        return console.log(`Primeiro parametro precisa ser array`);
+    };
+
+    if (isNaN(index)) {
+        return console.log(`Segundo parametro precisa ser numérico`);
+    };
+
+    if (index > array.length) {
+        newArray = array;
+
+        console.log(`Index maior que array, adicionando como último elemento.`)
+        
+        newArray.push(data);
+        
+        return newArray;
+    } else {
+        array.forEach(result => {
+            position++;
+
+            if (position == index) newArray.push(data);
+
+            newArray.push(result);
+
+        });
+
+        return newArray;
+    }
+}
+
+module.exports.createID = (tamanho) => {
+    let code = "";
+
+    str = '0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    
+    for (let i = 0; i < tamanho; i++) {
+       
+        random = Math.floor(Math.random() * str.length);
+        
+        code += (str[random]); 
+
+    }
+
+    return code;
+}
+
+Array.prototype.teste = function () {
+    for (i = 0; i < this.length; i++) {
+        this[i] = this[i].toUpperCase();
+    }
+};
+
+module.exports.blue = (data) => {
+    return chalk.bold.blue(data);
+}
+
+module.exports.orange = (data) => {
+    return chalk.bold.yellow(data);
+}
+
+module.exports.yellow = (data) => {
+    return chalk.bold.yellow(data);
+}
+
+module.exports.green = (data) => {
+    return chalk.bold.green(data);
+}
+
+module.exports.red = (data) => {
+    return chalk.bold.red(data);
+}
 
 module.exports.test = () => {
 
     NeableEvents.connected();
 
+}
+
+function textBlue(data) {
+    return chalk.bold.blue(data);
+}
+
+function textOrange(data) {
+    return chalk.bold.yellow(data);
+}
+
+function textGreen(data) {
+    return chalk.bold.green(data);
+}
+
+function textRed(data) {
+    return chalk.bold.red(data);
 }

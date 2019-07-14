@@ -1,4 +1,4 @@
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('../../neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
 
     //if (!args) return;
@@ -25,5 +25,6 @@ module.exports.run = async (Brie, message, args) => {
 } 
 
 module.exports.help = {
-    name: 'eval'
+    name: 'eval',
+    working: false
 }

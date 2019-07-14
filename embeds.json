@@ -1,0 +1,59 @@
+{
+  "savedEmbeds": [
+    {
+      "title": "test",
+      "color": 16777215,
+      "fields": [],
+      "files": [],
+      "EmbedID": "wd8Q3NN2R056yU8wp31O"
+    },
+    {
+      "title": "titulo bacana",
+      "description": "description bacana",
+      "fields": [
+        {
+          "name": "daora de mais",
+          "value": "mais daora ainda",
+          "inline": false
+        }
+      ],
+      "thumbnail": {
+        "url": "https://cdn.discordapp.com/avatars/474407357649256448/7d0d476b8bfa3ced9008749922159fe1.png?size=2048"
+      },
+      "image": {
+        "url": "https://cdn.discordapp.com/avatars/474407357649256448/7d0d476b8bfa3ced9008749922159fe1.png?size=2048"
+      },
+      "footer": {
+        "text": "fooda",
+        "icon_url": "https://cdn.discordapp.com/avatars/474407357649256448/7d0d476b8bfa3ced9008749922159fe1.png?size=2048"
+      },
+      "files": [],
+      "EmbedID": "768p5070v3OGssAI65Ew"
+    },
+    {
+      "title": "batata",
+      "description": "tekorpwekop",
+      "fields": [],
+      "thumbnail": {
+        "url": "https://cdn.discordapp.com/attachments/595026546629148674/599763702035513344/unknown.png"
+      },
+      "image": {
+        "url": "https://cdn.discordapp.com/avatars/474407357649256448/7d0d476b8bfa3ced9008749922159fe1.png?size=2048"
+      },
+      "files": [],
+      "EmbedID": "NX3O8eKnsJa0Rk6lZdSL"
+    },
+    {
+      "title": "Usuário: Um nick ruim",
+      "description": "XP: 40000 / LEVEL: 400",
+      "color": 16777215,
+      "fields": [],
+      "footer": {
+        "text": "Um nick ruim#6565",
+        "icon_url": "https://cdn.discordapp.com/avatars/474407357649256448/7d0d476b8bfa3ced9008749922159fe1.png?size=2048"
+      },
+      "files": [],
+      "EmbedID": "xZM2yzy26m9kt893B8zU"
+    }
+  ]
+}

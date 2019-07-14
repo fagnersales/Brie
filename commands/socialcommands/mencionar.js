@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('../../neable_module/NeableCommands');
 module.exports.run = (Brie, message, args) => {
 
     EmbedDaMenção = new Discord.RichEmbed()
@@ -90,10 +90,10 @@ Mencionada por: ${message.author.username}`)
 }
 
 module.exports.help = {
-    name: 'mention',
+    name: 'mencionar',
     type: "social",
     description: 'Mencione uma mensagem!',
-    usage: "b.mention [ID/LINK]",
-    example: "b.mention 593177485139509279",
+    usage: "b.mencionar [ID/LINK]",
+    example: "b.mencionar 593177485139509279",
     working: true
 } 

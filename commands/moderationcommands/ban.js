@@ -1,4 +1,4 @@
-const Neable = require('c:/Brie/neable_module/NeableCommands');
+const Neable = require('../../neable_module/NeableCommands');
 module.exports.run = async (Brie, message, args) => {
     // Command here.
     if (!message.guild.member(message.author.id).hasPermission(["BAN_MEMBERS"])) return message.reply(`You need permissions to ban members to use this command!`).then(msg => msg.delete(5000));
