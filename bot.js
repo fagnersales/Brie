@@ -11,7 +11,7 @@ timeout = new Set();
 timeoutTime = 60000;
 const chalk = require('chalk');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://brielarson:2f0a1g1n2e5r12@cluster0-geqjm.mongodb.net/brie_system?retryWrites=true&w=majority', { useNewUrlParser: true })
+mongoose.connect('some good uri =D')
 const Level = require('./models/level.js');
 const Welcome = require('./models/welcome.js');
 const YouTube = require('simple-youtube-api');
